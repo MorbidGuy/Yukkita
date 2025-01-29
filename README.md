@@ -119,12 +119,6 @@ Se você gostaria de contribuir com melhorias ou novos recursos para o bot, fiqu
 Licença
 Este projeto está licenciado sob a MIT License - veja o arquivo LICENSE para mais detalhes.
 
-markdown
-Copiar
-
-### Alterações feitas:
-- **Arquivo Excel (`.xlsx`)**: Agora está mais claro que o arquivo Excel precisa ter colunas específicas e um exemplo das colunas obrigatórias foi adicionado.
-- **Caminho do arquivo Excel**: Explicitação de que o caminho do arquivo deve ser configurado corretamente no código, com um exemplo de como fazer isso.
 
 
 
