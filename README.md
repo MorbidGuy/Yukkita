@@ -77,22 +77,22 @@ Para rodar o bot, é necessário ter o Python instalado em sua máquina. O bot f
   FEEDBACK_CHANNEL_ID = 'Coloque_aqui_o_ID_do_canal_de_feedback'
   SUGGESTIONS_CHANNEL_ID = 'Coloque_aqui_o_ID_do_canal_de_sugestoes'
   PATCH_NOTE_CHANNEL_ID = 'Coloque_aqui_o_ID_do_canal_de_patch_notes'
-Arquivo Excel (.xlsx): O bot utiliza um arquivo Excel para gerenciar os jogadores e estatísticas. Você precisará de um arquivo .xlsx contendo as seguintes colunas:
+Arquivo Excel (.xlsx): O bot utiliza um arquivo Excel para gerenciar os jogadores e estatísticas. Você precisará de um arquivo .xlsx contendo as seguintes colunas obrigatórias:
 
-ID
-name
-Mono Champion
-Role 1
-Role 2
-Losses
-Wins
-Total
-Caminho do Arquivo Excel: Substitua o caminho do arquivo no código pelo local onde o arquivo está armazenado. Por exemplo:
+ID — ID do jogador.
+name — Nome do jogador.
+Mono Champion — Campeão mono do jogador.
+Role 1 — Primeira role (por exemplo, "Top", "Mid", "Jungle", etc.).
+Role 2 — Segunda role (opcional).
+Losses — Número de derrotas.
+Wins — Número de vitórias.
+Total — Total de jogos jogados (opcional).
+Caminho do Arquivo Excel: No código, substitua o caminho do arquivo pelo local onde o arquivo .xlsx está armazenado na sua máquina. Exemplo:
 
 python
 Copiar
 players_df = pd.read_excel('C:\\Caminho\\Para\\Nome_do_Arquivo.xlsx')
-Caso o arquivo não exista, ele será criado automaticamente com a estrutura necessária, mas você precisa garantir que o arquivo Excel tenha as colunas corretas.
+Certifique-se de alterar 'C:\\Caminho\\Para\\Nome_do_Arquivo.xlsx' para o caminho correto do arquivo na sua máquina. Se o arquivo não existir, ele será criado automaticamente com a estrutura necessária, mas você precisa garantir que o arquivo Excel tenha as colunas corretas.
 
 3. Executando o Bot
 Depois de configurar o bot, basta rodar o arquivo principal para iniciar o bot:
@@ -122,14 +122,9 @@ Este projeto está licenciado sob a MIT License - veja o arquivo LICENSE para ma
 markdown
 Copiar
 
-### Explicação:
-
-1. **Instalação**: Passos detalhados de como clonar o repositório e instalar as dependências necessárias.
-2. **Configuração**: Informações sobre como configurar o bot com o token do Discord e as IDs dos canais. Instruções sobre como pegar as IDs no Discord e configurar o arquivo Excel.
-3. **Execução**: Como rodar o bot após a configuração.
-4. **Dependências**: As bibliotecas necessárias para rodar o bot e como instalá-las.
-5. **Contribuições**: Como contribuir com o bot, com uma chamada à ação para pull requests.
-6. **Licença**: Detalhes sobre a licença do projeto.
+### Alterações feitas:
+- **Arquivo Excel (`.xlsx`)**: Agora está mais claro que o arquivo Excel precisa ter colunas específicas e um exemplo das colunas obrigatórias foi adicionado.
+- **Caminho do arquivo Excel**: Explicitação de que o caminho do arquivo deve ser configurado corretamente no código, com um exemplo de como fazer isso.
 
 
 
