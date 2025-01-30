@@ -34,7 +34,7 @@ Para rodar o bot, é necessário ter o Python instalado em sua máquina. O bot f
 1. **Clone este repositório** para o seu ambiente local:
 
     ```bash
-    git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
+    git clone https://github.com/MorbidGuy/Yukkita.git
     cd SEU_REPOSITORIO
     ```
 
