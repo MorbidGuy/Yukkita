@@ -171,7 +171,6 @@ async def send_patch_notes(lines):
         print("Canal de patch notes não encontrado.")
 
 def create_embed(title, description):
-    """Cria um embed com o título e descrição fornecidos."""
     return discord.Embed(title=title, description=description, color=discord.Color.blue())
 
 players_df = pd.DataFrame()
@@ -180,7 +179,6 @@ command_messages = {}
 
 @client.command(name='jogadores')
 async def jogadores(ctx):
-    """Lista todos os jogadores e suas lanes, junto com os campeões mono disponíveis, divididos em até 3 colunas por embed."""
     if players_df.empty:
         await ctx.send(embed=create_embed("Jogadores", "Nenhum jogador disponível no momento."))
         return
@@ -194,12 +192,10 @@ async def jogadores(ctx):
     num_embeds = (num_players + num_rows - 1) // num_rows
     
     def format_roles(role1, role2):
-        """Formata as roles em uma string compacta."""
         roles = [role for role in [role1, role2] if pd.notna(role)]
         return ', '.join(f'`{role.strip()}`' for role in roles) if roles else "Nenhuma lane definida"
 
     def format_column(players):
-        """Formata uma coluna de jogadores para ser exibida no embed."""
         description = ""
         for player in players:
             mono = player['Mono Champion'] if pd.notna(player['Mono Champion']) else "Nenhum Mono Champion definido"
@@ -233,7 +229,6 @@ async def jogadores(ctx):
 @client.command()
 @commands.has_permissions(administrator=True)
 async def beforeiforget(ctx, member: discord.Member):
-    """Apaga todas as mensagens de um usuário mencionado no canal atual. Apenas administradores podem usar este comando."""
     def is_member_message(m):
         return m.author == member
 
@@ -255,7 +250,6 @@ async def beforeiforget_error(ctx, error):
 @client.command()
 @commands.has_permissions(administrator=True)
 async def blackout(ctx):
-    """Apaga todas as mensagens do canal atual. Apenas administradores podem usar."""
     try:
         await ctx.send("Apagando todas as mensagens...")
         await ctx.channel.purge()
@@ -274,7 +268,6 @@ async def blackout_error(ctx, error):
 @client.command()
 @commands.has_permissions(administrator=True)
 async def blackops(ctx, limit: int):
-    """Apaga um número específico de mensagens do canal atual (1 a 100). Apenas administradores podem usar este comando."""
     if 1 <= limit <= 100:
         try:
             await ctx.send(embed=create_blue_embed("Ação em Andamento", f"Apagando {limit} mensagens..."))
@@ -299,12 +292,10 @@ def create_blue_embed(title, description):
     return embed
 
 def split_text(text, max_length=1024):
-    """Divide o texto em partes menores, cada uma com no máximo max_length caracteres."""
     return [text[i:i+max_length] for i in range(0, len(text), max_length)]
 
 @client.command()
 async def ajuda(ctx):
-    """Exibe a mensagem de ajuda em um único embed com seções para administradores e usuários comuns."""
     general_help_text = (
         "**Comandos Gerais:**\n"
         "`!liga_das_ruas` - Permite selecionar 10 IDs de jogadores para criar dois times aleatórios. Os times serão exibidos. BOA SORTE 💀\n\n"
@@ -339,7 +330,6 @@ async def ajuda(ctx):
 
 @client.command(name='feedback')
 async def feedback(ctx, *, message: str):
-    """Comando para enviar feedback."""
     channel = client.get_channel(FEEDBACK_CHANNEL_ID)
     if channel:
         embed_feedback = discord.Embed(
@@ -354,7 +344,6 @@ async def feedback(ctx, *, message: str):
 
 @client.command(name='sugestao')
 async def sugestao(ctx, *, message: str):
-    """Comando para enviar sugestões."""
     channel = client.get_channel(SUGGESTIONS_CHANNEL_ID)
     if channel:
         embed_sugestao = discord.Embed(
@@ -369,58 +358,63 @@ async def sugestao(ctx, *, message: str):
 
 @client.command(name='add_jogador')
 async def add_jogador(ctx):
-    """Inicia o processo de adicionar um jogador com um fluxo interativo."""
     await ctx.send(embed=create_blue_embed("Adicionar Jogador", "Vamos adicionar um novo jogador! Por favor, forneça as seguintes informações:"))
 
     def check(m):
         return m.author == ctx.author and m.channel == ctx.channel
 
     try:
+        # Solicitar nome do jogador
         await ctx.send(embed=create_blue_embed("Nome do Jogador", "Digite o nome do jogador:"))
         name_msg = await client.wait_for('message', check=check)
         name = name_msg.content
 
-        global players_df
-        next_id = len(players_df) + 1  
+        # Gerar próximo ID
+        next_id = len(players_df) + 1
 
+        # Solicitar Mono Champion
         await ctx.send(embed=create_blue_embed("Mono Champion", "Digite o Mono Champion do jogador:"))
         mono_msg = await client.wait_for('message', check=check)
         mono_champion = mono_msg.content
 
+        # Solicitar Role 1
         await ctx.send(embed=create_blue_embed("Role 1", "Digite o Lane Principal do jogador:"))
         role1_msg = await client.wait_for('message', check=check)
         role1 = role1_msg.content
 
+        # Solicitar Role 2 (opcional)
         await ctx.send(embed=create_blue_embed("Role 2", "Digite o Lane Secundaria do jogador (ou deixe em branco):"))
         role2_msg = await client.wait_for('message', check=check)
-        role2 = role2_msg.content or None  # Permitir que Role 2 seja vazio
+        role2 = role2_msg.content or None
 
-        losses = 0
-        wins = 0
-
+        # Criar novo registro
         new_row = {
             'ID': next_id,
             'name': name,
             'Mono Champion': mono_champion,
             'Role 1': role1,
             'Role 2': role2,
-            'Losses': losses,
-            'Wins': wins,
-            'Total': losses + wins
+            'Losses': 0,
+            'Wins': 0,
+            'Total': 0
         }
-        
+
+        # Adicionar ao DataFrame
+        global players_df
         players_df = pd.concat([players_df, pd.DataFrame([new_row])], ignore_index=True)
 
+        # Salvar no Excel
         players_df.to_excel('C:\\Caminho\\Para\\Nome_doArquivo.xlsx', index=False)
 
+        # Enviar confirmação
         embed = create_blue_embed("Jogador Adicionado", f"O jogador **{name}** foi adicionado com sucesso!")
         embed.add_field(name="ID", value=str(next_id))
         embed.add_field(name="Mono Champion", value=mono_champion)
         embed.add_field(name="Role 1", value=role1)
         embed.add_field(name="Role 2", value=role2 if role2 else "Nenhum")
-        embed.add_field(name="Derrotas", value=str(losses))
-        embed.add_field(name="Vitórias", value=str(wins))
-        embed.add_field(name="Total", value=str(losses + wins))
+        embed.add_field(name="Derrotas", value="0")
+        embed.add_field(name="Vitórias", value="0")
+        embed.add_field(name="Total", value="0")
 
         await ctx.send(embed=embed)
         logging.info(f"Jogador {name} adicionado com sucesso.")
@@ -430,7 +424,6 @@ async def add_jogador(ctx):
 
 @client.command(name='remove_jogador')
 async def remove_jogador(ctx, player_id: int):
-    """Remove um jogador da tabela com base no ID fornecido."""
     global players_df
 
     if player_id not in players_df['ID'].values:
@@ -446,7 +439,6 @@ async def remove_jogador(ctx, player_id: int):
 
 @client.command(name='id')
 async def show_player_id(ctx, *, player_name: str):
-    """Mostra a ID e os detalhes de um jogador baseado no nome fornecido."""
     global players_df
 
     player_row = players_df[players_df['name'].str.lower() == player_name.lower()]
@@ -476,7 +468,6 @@ async def show_player_id(ctx, *, player_name: str):
 ##################################################################################################################################################
 @client.command()
 async def liga_das_ruas(ctx):
-    """Permite selecionar 10 IDs de jogadores para criar dois times aleatórios."""
     if not players:
         await ctx.send("Erro: Dados dos jogadores não carregados.")
         return
@@ -520,8 +511,6 @@ load_players()
 ##################################################################################################################################################
 @client.command()
 async def caçaoteemo(ctx):
-    """Inicia uma partida de Caça ao Teemo"""
-
     embed_inicial = discord.Embed(
         title="Início da Partida",
         description="Digite os IDs dos jogadores separados por espaço:",
